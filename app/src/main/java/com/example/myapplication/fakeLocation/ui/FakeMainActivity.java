@@ -38,7 +38,8 @@ public class FakeMainActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_app);
         assert recyclerView != null;
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
+                false));
         recyclerView.setHasFixedSize(true);
         mAppAdapter = new AppAdapter(mAppInfos);
         recyclerView.setAdapter(mAppAdapter);
@@ -57,21 +58,25 @@ public class FakeMainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.fake_menu_main,menu);
+        getMenuInflater().inflate(R.menu.fake_menu_main, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.setting:
 
                 break;
             case R.id.donate:
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://qr.alipay.com/apoy1zw1o2xpc7915d")));
+//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://qr.alipay" +
+//                        ".com/apoy1zw1o2xpc7915d")));
                 break;
             case R.id.about:
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://caiyao.name/releases")));
+//                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://caiyao" +
+//                        ".name/releases")));
+                break;
+            default:
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -86,13 +91,15 @@ public class FakeMainActivity extends AppCompatActivity {
             for (int i = 0; i < packages.size(); i++) {
                 PackageInfo packageInfo = packages.get(i);
                 AppInfo tmpInfo = new AppInfo();
-                tmpInfo.appName = packageInfo.applicationInfo.loadLabel(getPackageManager()).toString();
+                tmpInfo.appName =
+                        packageInfo.applicationInfo.loadLabel(getPackageManager()).toString();
                 tmpInfo.packageName = packageInfo.packageName;
                 tmpInfo.versionName = packageInfo.versionName;
                 tmpInfo.versionCode = packageInfo.versionCode;
                 tmpInfo.appIcon = packageInfo.applicationInfo.loadIcon(getPackageManager());
-                if (!packageInfo.packageName.equals(BuildConfig.APPLICATION_ID))
+                if (!packageInfo.packageName.equals(BuildConfig.APPLICATION_ID)) {
                     appList.add(tmpInfo);
+                }
                 publishProgress(i / packages.size() * 100);
             }
             return appList;
@@ -121,7 +128,8 @@ public class FakeMainActivity extends AppCompatActivity {
 
         @Override
         public AppViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new AppViewHolder(getLayoutInflater().inflate(R.layout.fake_app_item, parent, false));
+            return new AppViewHolder(getLayoutInflater().inflate(R.layout.fake_app_item, parent,
+                    false));
         }
 
         @Override
@@ -132,7 +140,9 @@ public class FakeMainActivity extends AppCompatActivity {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(FakeMainActivity.this, AMapActivity.class).putExtra("package_name", mAppInfos.get(holder.getAdapterPosition()).getPackageName()));
+                    startActivity(new Intent(FakeMainActivity.this, AMapActivity.class).putExtra(
+                            "package_name",
+                            mAppInfos.get(holder.getAdapterPosition()).getPackageName()));
                 }
             });
         }

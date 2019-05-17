@@ -10,6 +10,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+        //高德地图
         ndk {
             //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
             abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "x86","x86_64"
@@ -22,9 +23,17 @@ android {
         }
     }
 
+    //高德地图
     allprojects {
         repositories {
             jcenter() // 或者 mavenCentral()
+        }
+    }
+
+    //高德地图
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
         }
     }
 

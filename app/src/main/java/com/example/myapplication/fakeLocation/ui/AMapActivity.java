@@ -56,7 +56,8 @@ public class AMapActivity extends AppCompatActivity implements AMap.OnMapClickLi
         mv.onCreate(savedInstanceState);
         aMap = mv.getMap();
         mSQLiteDatabase = new DbHelper(this).getWritableDatabase();
-        Cursor cursor = mSQLiteDatabase.query(DbHelper.APP_TABLE_NAME, new String[]{"latitude,longitude"}, "package_name=?", new String[]{pacakgeName}, null, null, null);
+        Cursor cursor = mSQLiteDatabase.query(DbHelper.APP_TABLE_NAME, new String[]{"latitude," +
+                "longitude"}, "package_name=?", new String[]{pacakgeName}, null, null, null);
         if (cursor != null && cursor.moveToNext()) {
             double lat = cursor.getDouble(cursor.getColumnIndex("latitude"));
             double lon = cursor.getDouble(cursor.getColumnIndex("longitude"));
@@ -70,7 +71,7 @@ public class AMapActivity extends AppCompatActivity implements AMap.OnMapClickLi
             aMap.moveCamera(CameraUpdateFactory.zoomTo(aMap.getMaxZoomLevel()));
             cursor.close();
         }
-        aMap.setMapType(AMap.MAP_TYPE_NORMAL);
+        aMap.setMapType(AMap.MAP_TYPE_SATELLITE);
         aMap.setOnMapClickListener(this);
     }
 
@@ -94,33 +95,34 @@ public class AMapActivity extends AppCompatActivity implements AMap.OnMapClickLi
                     Toast.makeText(this, "请点击地图选择一个地点！", Toast.LENGTH_SHORT).show();
                     return true;
                 }
-                new AlertDialog.Builder(AMapActivity.this).setTitle("注意").setMessage("部分应用的定位如qq附近的人，钉钉签到等使用的是基站定位，如需使用相关功能请同时填写基站信息")
-                        .setPositiveButton("知道了", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
+                new AlertDialog.Builder(AMapActivity.this).setTitle("注意").setMessage("部分应用的定位如qq" +
+                        "附近的人，钉钉签到等使用的是基站定位，如需使用相关功能请同时填写基站信息").setPositiveButton("知道了",
+                        new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).show();
                 ContentValues contentValues = new ContentValues();
                 contentValues.put("package_name", pacakgeName);
                 contentValues.put("latitude", latLng.latitude);
                 contentValues.put("longitude", latLng.longitude);
                 contentValues.put("lac", lac);
                 contentValues.put("cid", cid);
-                mSQLiteDatabase.insertWithOnConflict(DbHelper.APP_TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+                mSQLiteDatabase.insertWithOnConflict(DbHelper.APP_TABLE_NAME, null, contentValues
+                        , SQLiteDatabase.CONFLICT_REPLACE);
                 break;
             case R.id.search:
-                View view = LayoutInflater.from(this).inflate(R.layout.fake_dialog_search, null, false);
+                View view = LayoutInflater.from(this).inflate(R.layout.fake_dialog_search, null,
+                        false);
                 final EditText et_key = (EditText) view.findViewById(R.id.key);
-                new AlertDialog.Builder(this).setView(view)
-                        .setTitle("搜索位置")
-                        .setPositiveButton("搜索", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                search(et_key.getText().toString());
-                            }
-                        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                new AlertDialog.Builder(this).setView(view).setTitle("搜索位置").setPositiveButton(
+                        "搜索", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        search(et_key.getText().toString());
+                    }
+                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -159,7 +161,8 @@ public class AMapActivity extends AppCompatActivity implements AMap.OnMapClickLi
                         contentValues.put("package_name", pacakgeName);
                         contentValues.put("lac", lac);
                         contentValues.put("cid", cid);
-                        mSQLiteDatabase.insertWithOnConflict(DbHelper.APP_TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
+                        mSQLiteDatabase.insertWithOnConflict(DbHelper.APP_TABLE_NAME, null,
+                                contentValues, SQLiteDatabase.CONFLICT_REPLACE);
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
@@ -167,6 +170,8 @@ public class AMapActivity extends AppCompatActivity implements AMap.OnMapClickLi
                         dialog.dismiss();
                     }
                 }).show();
+                break;
+            default:
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -203,16 +208,14 @@ public class AMapActivity extends AppCompatActivity implements AMap.OnMapClickLi
                         for (int j = 0; j < poiItems.size(); j++) {
                             keyList[j] = poiItems.get(j).getTitle();
                         }
-                        new AlertDialog.Builder(AMapActivity.this)
-                                .setTitle("选择位置")
-                                .setSingleChoiceItems(keyList, 0, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        aMap.moveCamera(CameraUpdateFactory.changeLatLng(new LatLng(poiItems.get(which).getLatLonPoint().getLatitude(), poiItems.get(which).getLatLonPoint().getLongitude())));
-                                        aMap.moveCamera(CameraUpdateFactory.zoomTo(aMap.getMaxZoomLevel()));
-                                        dialog.dismiss();
-                                    }
-                                }).show();
+                        new AlertDialog.Builder(AMapActivity.this).setTitle("选择位置").setSingleChoiceItems(keyList, 0, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                aMap.moveCamera(CameraUpdateFactory.changeLatLng(new LatLng(poiItems.get(which).getLatLonPoint().getLatitude(), poiItems.get(which).getLatLonPoint().getLongitude())));
+                                aMap.moveCamera(CameraUpdateFactory.zoomTo(aMap.getMaxZoomLevel()));
+                                dialog.dismiss();
+                            }
+                        }).show();
                     } else {
                         Toast.makeText(AMapActivity.this, "没有搜索结果", Toast.LENGTH_SHORT).show();
                     }
